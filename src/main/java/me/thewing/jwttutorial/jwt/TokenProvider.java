@@ -1,11 +1,8 @@
 package me.thewing.jwttutorial.jwt;
 
-import java.security.Key;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.stream.Collectors;
-
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -17,14 +14,11 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.UnsupportedJwtException;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
+import java.security.Key;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.stream.Collectors;
 
 @Component
 public class TokenProvider implements InitializingBean {
@@ -38,18 +32,15 @@ public class TokenProvider implements InitializingBean {
 
 	private Key key;
 
-	public TokenProvider(@Value("${jwt.secret}") String secret,
-			@Value("${jwt.token-validity-in-seconds}") long tokenValidityInMilliseconds) {
+	public TokenProvider(
+			@Value("${jwt.secret}") String secret,
+			@Value("${jwt.token-validity-in-seconds}") long tokenValidityInSeconds) {
 		this.secret = secret;
-		this.tokenValidityInMilliseconds = tokenValidityInMilliseconds * 1000;
+		this.tokenValidityInMilliseconds = tokenValidityInSeconds * 1000;
 	}
 
-	/**
-	 * Bean이 생성되고 secret 값을 Base64 Decode해서 key 변수에 할당해준다
-	 */
-
 	@Override
-	public void afterPropertiesSet() throws Exception {
+	public void afterPropertiesSet() {
 		byte[] keyBytes = Decoders.BASE64.decode(secret);
 		this.key = Keys.hmacShaKeyFor(keyBytes);
 	}
@@ -59,7 +50,7 @@ public class TokenProvider implements InitializingBean {
 				.map(GrantedAuthority::getAuthority)
 				.collect(Collectors.joining(","));
 
-		long now = new Date().getTime();
+		long now = (new Date()).getTime();
 		Date validity = new Date(now + this.tokenValidityInMilliseconds);
 
 		return Jwts.builder()

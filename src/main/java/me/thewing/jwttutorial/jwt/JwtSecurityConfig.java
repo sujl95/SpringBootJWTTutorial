@@ -5,9 +5,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import me.thewing.jwttutorial.jwt.JwtFilter;
-import me.thewing.jwttutorial.jwt.TokenProvider;
-
 public class JwtSecurityConfig extends SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity> {
 
 	private TokenProvider tokenProvider;
