@@ -6,18 +6,16 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+import lombok.RequiredArgsConstructor;
 import me.thewing.jwttutorial.dto.UserDto;
 import me.thewing.jwttutorial.entity.User;
 import me.thewing.jwttutorial.service.UserService;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api")
 public class UserController {
 	private final UserService userService;
-
-	public UserController(UserService userService) {
-		this.userService = userService;
-	}
 
 	@GetMapping("/hello")
 	public ResponseEntity<String> hello() {
